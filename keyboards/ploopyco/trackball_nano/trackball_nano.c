@@ -33,19 +33,19 @@
 #endif
 
 #ifndef OPT_SCALE
-#    define OPT_SCALE 1  // Multiplier for wheel
+#    define OPT_SCALE 1 // Multiplier for wheel Default is 1
 #endif
 
 #ifndef PLOOPY_DPI_OPTIONS
 #    define PLOOPY_DPI_OPTIONS \
-        { 375, 750, 1375 }
+        { 700 }
 #    ifndef PLOOPY_DPI_DEFAULT
-#        define PLOOPY_DPI_DEFAULT 2
+#        define PLOOPY_DPI_DEFAULT 0
 #    endif
 #endif
 
 #ifndef PLOOPY_DPI_DEFAULT
-#    define PLOOPY_DPI_DEFAULT 2
+#    define PLOOPY_DPI_DEFAULT 0
 #endif
 
 keyboard_config_t keyboard_config;

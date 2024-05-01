@@ -36,9 +36,7 @@
 #    include "process_joystick.h"
 #endif
 
-#ifdef LEADER_ENABLE
 #    include "process_leader.h"
-#endif
 
 #ifdef MAGIC_ENABLE
 #    include "process_magic.h"
@@ -66,6 +64,10 @@
 
 #ifdef UNICODE_COMMON_ENABLE
 #    include "process_unicode_common.h"
+#endif
+
+#ifdef LAYER_LOCK_ENABLE
+#    include "process_layer_lock.h"
 #endif
 
 #ifdef AUDIO_ENABLE
@@ -313,6 +315,9 @@ bool process_record_quantum(keyrecord_t *record) {
 #endif
 #ifdef HAPTIC_ENABLE
             process_haptic(keycode, record) &&
+#endif
+#ifdef ORYX_ENABLE
+            process_record_oryx(keycode, record) &&
 #endif
 #if defined(VIA_ENABLE)
             process_record_via(keycode, record) &&

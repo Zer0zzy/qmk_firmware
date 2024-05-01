@@ -1,5 +1,8 @@
 #include <limits.h>
 #include <stdint.h>
+#ifdef ORYX_ENABLE
+#    include "oryx.h"
+#endif
 
 #include "keyboard.h"
 #include "action.h"

@@ -51,6 +51,10 @@
 extern keymap_config_t keymap_config;
 #endif
 
+#ifdef ORYX_ENABLE
+#    include "oryx.h"
+#endif
+
 #if defined(CONSOLE_ENABLE)
 #    define RBUF_SIZE 256
 #    include "ring_buffer.h"
