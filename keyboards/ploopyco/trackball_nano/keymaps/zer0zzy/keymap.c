@@ -24,7 +24,7 @@
 #define SCROLL_LOCK_BITMASK 0b10
 
 
-#define PLOOPY_DPI_OPTIONS { 700, 50000 }
+#define PLOOPY_DPI_OPTIONS { 700 }
 #define PLOOPY_DPI_DEFAULT 0
 
 // World record for fastest index finger tapping is 1092 taps per minute, which
@@ -75,8 +75,6 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 		}
 	} else if (mouse_enabled && timer_elapsed(mouse_timer) > MOUSE_TIMEOUT) {
 		mouse_enabled = false;
-		if (scroll_lock_state) {
-			tap_code(KC_SCROLL_LOCK);
 		}
 	}
     if (scroll_enabled) {
@@ -128,7 +126,6 @@ uint32_t command_timeout(uint32_t trigger_time, void *cb_arg) {
             cycle_dpi();
             break;
         case CMD_RESET:
-        case CMD_EXTRA:
 #           ifdef CONSOLE_ENABLE
             uprint("QK_BOOT)\n");
 #           endif
