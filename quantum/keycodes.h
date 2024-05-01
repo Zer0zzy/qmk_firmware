@@ -723,6 +723,7 @@ enum qk_keycode_defines {
     QK_TRI_LAYER_UPPER = 0x7C78,
     QK_REPEAT_KEY = 0x7C79,
     QK_ALT_REPEAT_KEY = 0x7C7A,
+    QK_LAYER_LOCK = 0x7C7B,
     QK_KB_0 = 0x7E00,
     QK_KB_1 = 0x7E01,
     QK_KB_2 = 0x7E02,
@@ -1366,6 +1367,7 @@ enum qk_keycode_defines {
     TL_UPPR    = QK_TRI_LAYER_UPPER,
     QK_REP     = QK_REPEAT_KEY,
     QK_AREP    = QK_ALT_REPEAT_KEY,
+    QK_LLCK    = QK_LAYER_LOCK,
 };
 
 // Range Helpers
@@ -1439,6 +1441,6 @@ enum qk_keycode_defines {
 #define MACRO_KEYCODE_RANGE                 QK_MACRO_0 ... QK_MACRO_31
 #define BACKLIGHT_KEYCODE_RANGE             QK_BACKLIGHT_ON ... QK_BACKLIGHT_TOGGLE_BREATHING
 #define RGB_KEYCODE_RANGE                   RGB_TOG ... RGB_MODE_TWINKLE
-#define QUANTUM_KEYCODE_RANGE               QK_BOOTLOADER ... QK_ALT_REPEAT_KEY
+#define QUANTUM_KEYCODE_RANGE               QK_BOOTLOADER ... QK_LAYER_LOCK
 #define KB_KEYCODE_RANGE                    QK_KB_0 ... QK_KB_31
 #define USER_KEYCODE_RANGE                  QK_USER_0 ... QK_USER_31
