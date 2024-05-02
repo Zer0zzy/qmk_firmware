@@ -29,7 +29,7 @@
 #endif
 
 #ifndef OPT_THRES
-#    define OPT_THRES 150  // (0-1024) 	Threshold for actication
+#    define OPT_THRES 150  // (0-1024) 	Threshold for activation
 #endif
 
 #ifndef OPT_SCALE
@@ -38,14 +38,14 @@
 
 #ifndef PLOOPY_DPI_OPTIONS
 #    define PLOOPY_DPI_OPTIONS \
-        { 700 }
+        { 375, 750, 1375 }
 #    ifndef PLOOPY_DPI_DEFAULT
-#        define PLOOPY_DPI_DEFAULT 0
+#        define PLOOPY_DPI_DEFAULT 2
 #    endif
 #endif
 
 #ifndef PLOOPY_DPI_DEFAULT
-#    define PLOOPY_DPI_DEFAULT 0
+#    define PLOOPY_DPI_DEFAULT 2
 #endif
 
 keyboard_config_t keyboard_config;

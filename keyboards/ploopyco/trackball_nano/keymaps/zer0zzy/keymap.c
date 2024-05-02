@@ -23,35 +23,36 @@
 #define NUM_LOCK_BITMASK 0b01
 #define SCROLL_LOCK_BITMASK 0b10
 
-
-#define PLOOPY_DPI_OPTIONS { 700 }
-#define PLOOPY_DPI_DEFAULT 0
+#define PLOOPY_DPI_OPTIONS { 150 }
+#define PLOOPY_DPI_DEFAULT 1
 
 // World record for fastest index finger tapping is 1092 taps per minute, which
 // is 55ms for a single tap.
 // https://recordsetter.com/world-record/index-finger-taps-minute/46066
 #define LED_CMD_TIMEOUT 60
-#define MOUSE_TIMEOUT 300
-#define DELTA_X_THRESHOLD 60
+#define MOUSE_TIMEOUT 50
+#define MOUSE_DELAY 200
+#define DELTA_X_THRESHOLD 15
 #define DELTA_Y_THRESHOLD 15
 
 typedef enum {
     // You could theoretically define 0b00 and send it by having a macro send
     // the second tap after LED_CMD_TIMEOUT has elapsed.
-    //CMD_EXTRA = 0b00,
+    // CMD_EXTRA = 0b00,
     TG_SCROLL = 0b01,
-    CYC_DPI   = 0b10,
+    // CYC_DPI   = 0b10,
     CMD_RESET = 0b11 // CMD_ prefix to avoid clash with QMK macro
 } led_cmd_t;
 
 // State
-static bool   mouse_enabled   = false;
-static bool   scroll_enabled  = false;
-static bool   num_lock_state  = false;
+static bool   mouse_enabled     = false;
+static bool   scroll_enabled    = false;
+static bool   num_lock_state    = false;
 static bool   scroll_lock_state = false;
-static bool   in_cmd_window   = false;
-static int8_t delta_x         = 0;
-static int8_t delta_y         = 0;
+static bool   in_cmd_window     = false;
+static int8_t delta_x           = 0;
+static int8_t delta_y           = 0;
+static uint16_t delay_timer     = 0;
 
 typedef struct {
     led_cmd_t led_cmd;
@@ -65,17 +66,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {{{KC_NO}}};
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     static uint16_t mouse_timer;
 
-    if (mouse_report.x || mouse_report.y || mouse_report.v || mouse_report.h ) {
+    if (mouse_report.x || mouse_report.y || mouse_report.v || mouse_report.h) {
+        if (!mouse_enabled) {
+            delay_timer = timer_read();
+        }
 		mouse_timer = timer_read();
-		if (!mouse_enabled) {
-			mouse_enabled = true;
-			if (!scroll_lock_state) {
-				tap_code(KC_SCROLL_LOCK);
-			}
+        mouse_enabled = true;
+	    if ((timer_elapsed(delay_timer) > MOUSE_DELAY) && !host_keyboard_led_state().scroll_lock) {
+            tap_code(KC_SCROLL_LOCK);
 		}
 	} else if (mouse_enabled && timer_elapsed(mouse_timer) > MOUSE_TIMEOUT) {
 		mouse_enabled = false;
-		}
+        delay_timer = timer_read();
 	}
     if (scroll_enabled) {
         delta_x += mouse_report.x;
@@ -98,7 +100,8 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         }
         mouse_report.x = 0;
         mouse_report.y = 0;
-    }
+    } 
+
     return mouse_report;
 }
 
@@ -119,12 +122,12 @@ uint32_t command_timeout(uint32_t trigger_time, void *cb_arg) {
 #           endif
             scroll_enabled = !scroll_enabled;
             break;
-        case CYC_DPI:
-#           ifdef CONSOLE_ENABLE
-            uprint("CYC_DPI)\n");
-#           endif
-            cycle_dpi();
-            break;
+//         case CYC_DPI:
+// #           ifdef CONSOLE_ENABLE
+//             uprint("CYC_DPI)\n");
+// #           endif
+//             cycle_dpi();
+//             break;
         case CMD_RESET:
 #           ifdef CONSOLE_ENABLE
             uprint("QK_BOOT)\n");
@@ -175,6 +178,7 @@ bool led_update_user(led_t led_state) {
         cmd_window_state.scroll_lock_count++;
 
         if (cmd_window_state.scroll_lock_count == 2) {
+           
             cmd_window_state.led_cmd |= SCROLL_LOCK_BITMASK;
             cmd_window_state.scroll_lock_count = 0;
         }
