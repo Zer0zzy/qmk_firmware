@@ -23,9 +23,6 @@
 #define NUM_LOCK_BITMASK 0b01
 #define SCROLL_LOCK_BITMASK 0b10
 
-#define PLOOPY_DPI_OPTIONS { 150 }
-#define PLOOPY_DPI_DEFAULT 1
-
 // World record for fastest index finger tapping is 1092 taps per minute, which
 // is 55ms for a single tap.
 // https://recordsetter.com/world-record/index-finger-taps-minute/46066
