@@ -12,6 +12,10 @@ enum custom_keycodes {
   ST_MACRO_3,
   ST_MACRO_4,
   ST_MACRO_5,
+  MX_BSPC,
+  MX_TAB,
+  MX_SPACE,
+  MX_ENTER,
 };
 
 enum layers {
@@ -166,9 +170,15 @@ bool rgb_matrix_indicators_user(void) {
       break;
     case 1:
       set_layer_color(1);
+      if (state.scroll_lock == 1) {
+        SENDSTRING(X_SCRL);
+      }
       break;
     case 2:
       set_layer_color(2);
+      if (state.scroll_lock == 1) {
+        SENDSTRING(X_SCRL);
+      }
       break;
     case 3:
       set_layer_color(3);
@@ -214,6 +224,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case ST_MACRO_5:
     if (record->event.pressed) {
       SEND_STRING(SS_TAP(X_NUM) SS_TAP(X_NUM) SS_TAP(X_SCRL) SS_TAP(X_SCRL));
+    }
+    break;
+    case MX_BSPC:
+    if (record->event.pressed) {
+      SENDSTRING(SS_TAP(X_SCRL) SS_TAP(X_BSPC));
+    }
+    break;
+    case MX_TAB:
+    if (record->event.pressed) {
+      SENDSTRING(SS_TAP(X_SCRL) SS_TAP(X_TAB));
+    }
+    break;
+    case MX_SPACE:
+    if (record->event.pressed) {
+      SENDSTRING(SS_TAP(X_SCRL) SS_TAP(X_SPACE));
+    }
+    break;
+    case MX_ENTER:
+    if (record->event.pressed) {
+      SENDSTRING(SS_TAP(X_SCRL) SS_TAP(X_ENTER));
     }
     break;
 
