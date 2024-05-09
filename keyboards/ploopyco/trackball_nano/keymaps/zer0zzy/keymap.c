@@ -27,8 +27,8 @@
 // is 55ms for a single tap.
 // https://recordsetter.com/world-record/index-finger-taps-minute/46066
 #define LED_CMD_TIMEOUT 60
-#define MOUSE_TIMEOUT 50
-#define MOUSE_DELAY 200
+#define MOUSE_TIMEOUT 100
+#define MOUSE_DELAY 50
 #define DELTA_X_THRESHOLD 15
 #define DELTA_Y_THRESHOLD 15
 
@@ -37,7 +37,7 @@ typedef enum {
     // the second tap after LED_CMD_TIMEOUT has elapsed.
     // CMD_EXTRA = 0b00,
     TG_SCROLL = 0b01,
-    // CYC_DPI   = 0b10,
+    CYC_DPI   = 0b10,
     CMD_RESET = 0b11 // CMD_ prefix to avoid clash with QMK macro
 } led_cmd_t;
 
@@ -62,19 +62,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {{{KC_NO}}};
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     static uint16_t mouse_timer;
+    // scroll_lock_state = mouse_enabled; Causes SCROLL features to stop working
+    scroll_lock_state = host_keyboard_led_state().scroll_lock;
 
     if (mouse_report.x || mouse_report.y || mouse_report.v || mouse_report.h) {
-        if (!mouse_enabled) {
+        if (!scroll_lock_state) {
             delay_timer = timer_read();
-        }
-		mouse_timer = timer_read();
-        mouse_enabled = true;
-	    if ((timer_elapsed(delay_timer) > MOUSE_DELAY) && !host_keyboard_led_state().scroll_lock) {
-            tap_code(KC_SCROLL_LOCK);
-		}
+            tap_code_delay(KC_SCROLL_LOCK, 25);
+            mouse_enabled = true;
+        } 
+        mouse_timer = timer_read();
 	} else if (mouse_enabled && timer_elapsed(mouse_timer) > MOUSE_TIMEOUT) {
 		mouse_enabled = false;
-        delay_timer = timer_read();
 	}
     if (scroll_enabled) {
         delta_x += mouse_report.x;
