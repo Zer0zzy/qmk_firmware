@@ -31,6 +31,7 @@
 #define MOUSE_DELAY 50
 #define DELTA_X_THRESHOLD 15
 #define DELTA_Y_THRESHOLD 15
+#define THRES 10
 
 typedef enum {
     // You could theoretically define 0b00 and send it by having a macro send
@@ -42,13 +43,16 @@ typedef enum {
 } led_cmd_t;
 
 // State
-static bool   mouse_enabled     = false;
 static bool   scroll_enabled    = false;
 static bool   num_lock_state    = false;
 static bool   scroll_lock_state = false;
 static bool   in_cmd_window     = false;
 static int8_t delta_x           = 0;
 static int8_t delta_y           = 0;
+static int8_t x                 = 0;
+static int8_t y                 = 0;
+static int8_t v                 = 0;
+static int8_t h                 = 0;
 static uint16_t delay_timer     = 0;
 
 typedef struct {
@@ -61,19 +65,17 @@ typedef struct {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {{{KC_NO}}};
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    static uint16_t mouse_timer;
-    // scroll_lock_state = mouse_enabled; Causes SCROLL features to stop working
-    scroll_lock_state = host_keyboard_led_state().scroll_lock;
+    x = mouse_report.x;
+    y = mouse_report.y;
+    v = mouse_report.v;
+    h = mouse_report.h;
 
-    if (mouse_report.x || mouse_report.y || mouse_report.v || mouse_report.h) {
+    //if ((((x<0)?-x:x) > THRES)||(((y<0)?-y:y) > THRES)||(((v<0)?-v:v) > THRES)||(((h<0)?-h:h) > THRES)) {
+    if (x || y || v || h) {
         if (!scroll_lock_state) {
             delay_timer = timer_read();
             tap_code_delay(KC_SCROLL_LOCK, 25);
-            mouse_enabled = true;
         } 
-        mouse_timer = timer_read();
-	} else if (mouse_enabled && timer_elapsed(mouse_timer) > MOUSE_TIMEOUT) {
-		mouse_enabled = false;
 	}
     if (scroll_enabled) {
         delta_x += mouse_report.x;
@@ -158,7 +160,7 @@ bool led_update_user(led_t led_state) {
         in_cmd_window = true;
         defer_exec(LED_CMD_TIMEOUT, command_timeout, &cmd_window_state);
     }
-
+    
     // Set num lock and scroll lock bits when each is toggled on and off within
     // the window.
     if (led_state.num_lock != num_lock_state) {
@@ -174,7 +176,6 @@ bool led_update_user(led_t led_state) {
         cmd_window_state.scroll_lock_count++;
 
         if (cmd_window_state.scroll_lock_count == 2) {
-           
             cmd_window_state.led_cmd |= SCROLL_LOCK_BITMASK;
             cmd_window_state.scroll_lock_count = 0;
         }

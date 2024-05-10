@@ -17,6 +17,7 @@
 */
 
 #include "moonlander.h"
+#include "raw_hid.h"
 
 keyboard_config_t keyboard_config;
 

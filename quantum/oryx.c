@@ -1,5 +1,5 @@
 #include <string.h>
-#include "oryx.h"
+#include <oryx.h>
 #ifdef KEYBOARD_voyager
 #    include "voyager.h"
 #endif
