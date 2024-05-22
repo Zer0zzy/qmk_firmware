@@ -27,11 +27,11 @@
 // is 55ms for a single tap.
 // https://recordsetter.com/world-record/index-finger-taps-minute/46066
 #define LED_CMD_TIMEOUT 60
-#define MOUSE_TIMEOUT 100
-#define MOUSE_DELAY 50
-#define DELTA_X_THRESHOLD 15
-#define DELTA_Y_THRESHOLD 15
-#define THRES 10
+#define MOUSE_TIMEOUT 70
+#define MOUSE_DELAY 40
+#define SCROLL_X_THRESHOLD 15    
+#define SCROLL_Y_THRESHOLD 15
+#define THRES 5
 
 typedef enum {
     // You could theoretically define 0b00 and send it by having a macro send
@@ -44,16 +44,15 @@ typedef enum {
 
 // State
 static bool   scroll_enabled    = false;
+//static bool   mouse_enabled     = false;
+//static bool   delayed           = false;
 static bool   num_lock_state    = false;
 static bool   scroll_lock_state = false;
 static bool   in_cmd_window     = false;
-static int8_t delta_x           = 0;
-static int8_t delta_y           = 0;
-static int8_t x                 = 0;
-static int8_t y                 = 0;
-static int8_t v                 = 0;
-static int8_t h                 = 0;
-static uint16_t delay_timer     = 0;
+static int8_t scroll_x          = 0;
+static int8_t scroll_y          = 0;
+static uint16_t last_scroll_lock_time = 0;
+
 
 typedef struct {
     led_cmd_t led_cmd;
@@ -65,41 +64,46 @@ typedef struct {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {{{KC_NO}}};
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    x = mouse_report.x;
-    y = mouse_report.y;
-    v = mouse_report.v;
-    h = mouse_report.h;
+    uint16_t current_time = timer_read();
+    // Check if mouse_report has changed beyond the deadzone threshold
+    bool mouse_report_changed = (abs(mouse_report.x) > THRES || 
+                                 abs(mouse_report.y) > THRES || 
+                                 abs(mouse_report.h) > THRES || 
+                                 abs(mouse_report.v) > THRES);
+    if (mouse_report_changed) {
+        if (!host_keyboard_led_state().scroll_lock && timer_elapsed(last_scroll_lock_time) > 50) {
 
-    //if ((((x<0)?-x:x) > THRES)||(((y<0)?-y:y) > THRES)||(((v<0)?-v:v) > THRES)||(((h<0)?-h:h) > THRES)) {
-    if (x || y || v || h) {
-        if (!scroll_lock_state) {
-            delay_timer = timer_read();
-            tap_code_delay(KC_SCROLL_LOCK, 25);
-        } 
-	}
+        tap_code(KC_SCROLL_LOCK);
+        uprint("SCROLL_LOCK_TOG\n");
+        last_scroll_lock_time = current_time;
+        }
+    }
     if (scroll_enabled) {
-        delta_x += mouse_report.x;
-        delta_y += mouse_report.y;
+        scroll_x += mouse_report.x;
+        scroll_y += mouse_report.y;
 
-        if (delta_x > DELTA_X_THRESHOLD) {
-            mouse_report.h = 1;
-            delta_x        = 0;
-        } else if (delta_x < -DELTA_X_THRESHOLD) {
-            mouse_report.h = -1;
-            delta_x        = 0;
+        if (scroll_x > SCROLL_X_THRESHOLD) {
+            mouse_report.h = mouse_report.x;
+            scroll_x       = 0;
+        } else if (scroll_x < -SCROLL_X_THRESHOLD) {
+            mouse_report.h = mouse_report.x;
+            scroll_x       = 0;
         }
 
-        if (delta_y > DELTA_Y_THRESHOLD) {
-            mouse_report.v = -1;
-            delta_y        = 0;
-        } else if (delta_y < -DELTA_Y_THRESHOLD) {
-            mouse_report.v = 1;
-            delta_y        = 0;
+        if (scroll_y > SCROLL_Y_THRESHOLD) {
+            mouse_report.v = mouse_report.y;
+            scroll_y       = 0;
+        } else if (scroll_y < -SCROLL_Y_THRESHOLD) {
+            mouse_report.v = mouse_report.y;
+            scroll_y       = 0;
         }
         mouse_report.x = 0;
         mouse_report.y = 0;
-    } 
-
+    }
+ 
+    // uprintf("x: %d\ny: %d\nv: %d\nh: %d\n", mouse_report.x, mouse_report.y, mouse_report.v, mouse_report.h);
+    //uprintf("delta_x: %d\ndelta_y: %d\ndelta_v: %d\ndelta_h: %d\n", delta_x, delta_y, delta_v, delta_h);
+    //uprintf("Mouse enabled = %d\n", mouse_enabled);
     return mouse_report;
 }
 
@@ -129,6 +133,7 @@ uint32_t command_timeout(uint32_t trigger_time, void *cb_arg) {
         case CMD_RESET:
 #           ifdef CONSOLE_ENABLE
             uprint("QK_BOOT)\n");
+            
 #           endif
             reset_keyboard();
             break;
@@ -184,5 +189,6 @@ bool led_update_user(led_t led_state) {
     // Keep our copy of the LED states in sync with the host.
     num_lock_state  = led_state.num_lock;
     scroll_lock_state = led_state.scroll_lock;
+
     return true;
 }

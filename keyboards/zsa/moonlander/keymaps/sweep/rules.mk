@@ -2,7 +2,7 @@
 # See rules at https://docs.qmk.fm/#/config_options?id=the-rulesmk-file
 AUDIO_ENABLE = no
 AUTO_SHIFT_ENABLE = yes
-CONSOLE_ENABLE = no
+CONSOLE_ENABLE = yes
 COMMAND_ENABLE = no
 ORYX_ENABLE = yes
 RGB_MATRIX_CUSTOM_KB = yes
