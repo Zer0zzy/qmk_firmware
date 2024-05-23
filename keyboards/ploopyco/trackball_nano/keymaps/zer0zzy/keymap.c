@@ -39,7 +39,7 @@ static bool   scroll_lock_state = false;
 static bool   in_cmd_window     = false;
 static int8_t scroll_x          = 0;
 static int8_t scroll_y          = 0;
-static uint16_t last_scroll_lock_time = 0;
+//static uint16_t last_scroll_lock_time = 0;
 
 
 typedef struct {
@@ -52,20 +52,20 @@ typedef struct {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {{{KC_NO}}};
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    uint16_t current_time = timer_read();
-    // Check if mouse_report has changed beyond the deadzone threshold
-    bool mouse_report_changed = (abs(mouse_report.x) > THRES || 
-                                 abs(mouse_report.y) > THRES || 
-                                 abs(mouse_report.h) > THRES || 
-                                 abs(mouse_report.v) > THRES);
-    if (mouse_report_changed) {
-        if (!host_keyboard_led_state().scroll_lock && timer_elapsed(last_scroll_lock_time) > 50) {
+    // uint16_t current_time = timer_read();
+    // // Check if mouse_report has changed beyond the deadzone threshold
+    // bool mouse_report_changed = (abs(mouse_report.x) > THRES || 
+    //                              abs(mouse_report.y) > THRES || 
+    //                              abs(mouse_report.h) > THRES || 
+    //                              abs(mouse_report.v) > THRES);
+    // if (mouse_report_changed) {
+    //     if (!host_keyboard_led_state().scroll_lock && timer_elapsed(last_scroll_lock_time) > 50) {
 
-        tap_code(KC_SCROLL_LOCK);
-        uprint("SCROLL_LOCK_TOG\n");
-        last_scroll_lock_time = current_time;
-        }
-    }
+    //     tap_code(KC_SCROLL_LOCK);
+    //     uprint("SCROLL_LOCK_TOG\n");
+    //     last_scroll_lock_time = current_time;
+    //     }
+    // }
     if (scroll_enabled) {
         scroll_x += mouse_report.x;
         scroll_y += mouse_report.y;
@@ -79,10 +79,10 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         }
 
         if (scroll_y > SCROLL_Y_THRESHOLD) {
-            mouse_report.v = mouse_report.y;
+            mouse_report.v = -mouse_report.y;
             scroll_y       = 0;
         } else if (scroll_y < -SCROLL_Y_THRESHOLD) {
-            mouse_report.v = mouse_report.y;
+            mouse_report.v = -mouse_report.y;
             scroll_y       = 0;
         }
         mouse_report.x = 0;
@@ -112,12 +112,12 @@ uint32_t command_timeout(uint32_t trigger_time, void *cb_arg) {
 #           endif
             scroll_enabled = !scroll_enabled;
             break;
-//         case CYC_DPI:
-// #           ifdef CONSOLE_ENABLE
-//             uprint("CYC_DPI)\n");
-// #           endif
-//             cycle_dpi();
-//             break;
+        case CYC_DPI:
+#           ifdef CONSOLE_ENABLE
+            uprint("CYC_DPI)\n");
+#           endif
+            cycle_dpi();
+            break;
         case CMD_RESET:
 #           ifdef CONSOLE_ENABLE
             uprint("QK_BOOT)\n");
