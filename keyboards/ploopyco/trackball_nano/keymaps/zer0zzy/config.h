@@ -15,3 +15,9 @@
 // 3 requires about 1/8th of a turn in a second to activate
 // 5 requires about 1/4th of a turn in a second
 #define THRES 3
+
+// Mouse Wheel defines
+#define MK_KINETIC_SPEED	
+#define MOUSEKEY_WHEEL_INITIAL_MOVEMENTS 5	
+#define MOUSEKEY_WHEEL_BASE_MOVEMENTS 32	
+#define MOUSEKEY_WHEEL_ACCELERATED_MOVEMENTS 48	

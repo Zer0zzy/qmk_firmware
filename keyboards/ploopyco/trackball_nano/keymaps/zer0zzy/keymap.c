@@ -70,19 +70,19 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         scroll_x += mouse_report.x;
         scroll_y += mouse_report.y;
 
-        if (scroll_x > SCROLL_X_THRESHOLD) {
-            mouse_report.h = mouse_report.x;
-            scroll_x       = 0;
-        } else if (scroll_x < -SCROLL_X_THRESHOLD) {
-            mouse_report.h = mouse_report.x;
-            scroll_x       = 0;
-        }
+        // if (scroll_x > SCROLL_X_THRESHOLD) {
+        //     mouse_report.h = mouse_report.x;
+        //     scroll_x       = 0;
+        // } else if (scroll_x < -SCROLL_X_THRESHOLD) {
+        //     mouse_report.h = mouse_report.x;
+        //     scroll_x       = 0;
+        // }
 
         if (scroll_y > SCROLL_Y_THRESHOLD) {
-            mouse_report.v = -mouse_report.y;
+            tap_code(KC_MS_WH_DOWN);
             scroll_y       = 0;
         } else if (scroll_y < -SCROLL_Y_THRESHOLD) {
-            mouse_report.v = -mouse_report.y;
+            tap_code(KC_MS_WH_UP);
             scroll_y       = 0;
         }
         mouse_report.x = 0;
@@ -110,7 +110,7 @@ uint32_t command_timeout(uint32_t trigger_time, void *cb_arg) {
 #           ifdef CONSOLE_ENABLE
             uprint("TG_SCROLL)\n");
 #           endif
-            scroll_enabled = !scroll_enabled;
+            //scroll_enabled = !scroll_enabled;
             break;
         case CYC_DPI:
 #           ifdef CONSOLE_ENABLE
@@ -146,7 +146,11 @@ bool led_update_user(led_t led_state) {
       .num_lock_count = 0,
       .scroll_lock_count = 0
     };
-
+    if (led_state.caps_lock == 1) {
+        scroll_enabled = true;
+    } else {
+        scroll_enabled = false;
+    }
     // Start timer to end command window if we are not already in the middle of
     // one.
     if (!in_cmd_window) {
