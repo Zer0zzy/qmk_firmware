@@ -1,7 +1,7 @@
 # Set any rules.mk overrides for your specific keymap here.
 # See rules at https://docs.qmk.fm/#/config_options?id=the-rulesmk-file
 ENCODER_MAP_ENABLE = yes
-MOUSEKEY_ENABLE = yes		# Disabling will free up 1400 bytes
+MOUSEKEY_ENABLE = no		# Disabling will free up 1400 bytes
 NKRO_ENABLE = yes           # Enable N-Key Rollover
 BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
 RGBLIGHT_ENABLE = no		# Enable keyboard RGB underglow
