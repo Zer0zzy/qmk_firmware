@@ -302,24 +302,24 @@ void leader_start_user(void) {
 }
 
 void leader_end_user(void) {
-    if (leader_sequence_one_key(KC_F)) {
-        // Leader, f => Types the below string
-        SEND_STRING("QMK is awesome.");
-    } else if (leader_sequence_two_keys(KC_D, KC_D)) {
+    if (leader_sequence_two_keys(KC_D, KC_D)) {
         // Leader, d, d => CTL+A, CTL+C
         SEND_STRING(SS_LCTL("a") SS_LCTL("c"));
-    } else if (leader_sequence_two_keys(KC_W, KC_R)) {
-        // Leader, w, ; => Display Right
+    } else if (leader_sequence_two_keys(KC_V, KC_R)) {
+        // Leader, (v)irtual, (r)ight => Display Right
         tap_code16(LCG(KC_RIGHT));
-    } else if (leader_sequence_two_keys(KC_W, KC_L)) {
-        // Leader, w, j => Display Left
+    } else if (leader_sequence_two_keys(KC_V, KC_L)) {
+        // Leader, (v)irtual, (left) => Display Left
         tap_code16(LCG(KC_LEFT));
     } else if (leader_sequence_two_keys(KC_W, KC_S)) {
-        // Leader, a, s => GUI+S
+        // Leader, (w)indows, (s)earch => GUI+S
         tap_code16(LGUI(KC_S));
     } else if (leader_sequence_two_keys(KC_W, KC_O)) {
-        // Leader, w, o => CTL+Space
+        // Leader, (w)indows, (o)mnibar => CTL+Space
         tap_code16(LCG(LALT(KC_SPACE)));
+    } else if (leader_sequence_two_keys(KC_P, KC_E)) {
+        // Leader, (p)rint, (e)mail => email
+        SEND_STRING("andre@managednerds.tech")
     } else if (leader_sequence_three_keys(KC_S, KC_C, KC_E)) {
         // Leader, s, c, e => -[ ]  (Symbols => Checkbox => Empty)
         SEND_STRING(SS_TAP(X_MINUS) SS_DELAY(10) SS_TAP(X_SPACE) SS_DELAY(10) SS_TAP(X_LBRC) SS_DELAY(10) SS_TAP(X_SPACE) SS_DELAY(10) SS_TAP(X_RBRC));
