@@ -319,7 +319,7 @@ void leader_end_user(void) {
         tap_code16(LCG(LALT(KC_SPACE)));
     } else if (leader_sequence_two_keys(KC_P, KC_E)) {
         // Leader, (p)rint, (e)mail => email
-        SEND_STRING("andre@managednerds.tech")
+        SEND_STRING("andre@managednerds.tech");
     } else if (leader_sequence_three_keys(KC_S, KC_C, KC_E)) {
         // Leader, s, c, e => -[ ]  (Symbols => Checkbox => Empty)
         SEND_STRING(SS_TAP(X_MINUS) SS_DELAY(10) SS_TAP(X_SPACE) SS_DELAY(10) SS_TAP(X_LBRC) SS_DELAY(10) SS_TAP(X_SPACE) SS_DELAY(10) SS_TAP(X_RBRC));
