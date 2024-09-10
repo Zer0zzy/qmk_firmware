@@ -223,7 +223,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case MX_SIGNATURE:
     if (record->event.pressed) {
-      SEND_STRING("--\nAndre Dessert\nCyberSecurity Systems Engineer\nCorsica Technologies");
+        SEND_STRING("");
+      //SEND_STRING("--\nAndre Dessert\nCyberSecurity Systems Engineer\nCorsica Technologies");
     }
     break;
     case MX_DPI_CHANGE:
@@ -318,7 +319,7 @@ void leader_end_user(void) {
         tap_code16(LGUI(KC_S));
     } else if (leader_sequence_two_keys(KC_W, KC_O)) {
         // Leader, w, o => CTL+Space
-        tap_code16(C(KC_SPACE));
+        tap_code16(LCG(LALT(KC_SPACE)));
     } else if (leader_sequence_three_keys(KC_S, KC_C, KC_E)) {
         // Leader, s, c, e => -[ ]  (Symbols => Checkbox => Empty)
         SEND_STRING(SS_TAP(X_MINUS) SS_DELAY(10) SS_TAP(X_SPACE) SS_DELAY(10) SS_TAP(X_LBRC) SS_DELAY(10) SS_TAP(X_SPACE) SS_DELAY(10) SS_TAP(X_RBRC));

@@ -253,7 +253,7 @@ void leader_end_user(void) {
         tap_code16(LGUI(KC_S));
     } else if (leader_sequence_two_keys(KC_W, KC_O)) {
         // Leader, w, o => CTL+Space
-        tap_code16(C(KC_SPACE));
+        tap_code16(LCG(LALT(KC_SPACE)));
     } else if (leader_sequence_three_keys(KC_S, KC_C, KC_E)) {
         // Leader, s, c, e => -[ ]  (Symbols => Checkbox => Empty)
         SEND_STRING(SS_TAP(X_MINUS) SS_DELAY(10) SS_TAP(X_SPACE) SS_DELAY(10) SS_TAP(X_LBRC) SS_DELAY(10) SS_TAP(X_SPACE) SS_DELAY(10) SS_TAP(X_RBRC));
